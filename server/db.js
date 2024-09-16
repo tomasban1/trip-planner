@@ -1,10 +1,31 @@
 import mysql from 'mysql2/promise';
 
-export const connection = await mysql.createConnection({
+const dbOptions = {
     host: 'localhost',
     user: 'root',
     password: '',
     database: 'turizmas'
-});
+};
 
-export default connection; 
+export let connection = null;
+
+
+
+setInterval(async () => {
+    if (connection?.connection?._fatalError !== null) {
+        console.log(connection?.connection?._fatalError);
+        try {
+            connection = await mysql.createConnection(dbOptions);
+        } catch (error) {
+            console.log('Nepavyko prisijungti prie DB programos');
+        }
+    } else {
+        console.log('conn ok');
+    }
+}, 5000);
+
+
+
+
+
+

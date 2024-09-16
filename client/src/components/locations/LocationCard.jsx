@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-export function LocationCard({ img, name, adress }){
+export function LocationCard({ img, name }){
     
 
     return (
