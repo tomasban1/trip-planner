@@ -12,6 +12,7 @@ export function Register() {
   const [password, setPassword] = useState('');
   const [usernameError, setusernameError] = useState('');
   const [passwordError, setpasswordError] = useState('');
+  const [apiResponse, setApiResponse] = useState(null);
   
     function submitForm(e){
       e.preventDefault();
@@ -48,12 +49,12 @@ export function Register() {
           password,
         }),
       })
-        .then(response => console.log(response.json()))
+        .then(res => res.json())
+        .then(msg => setApiResponse(msg))
+        .catch(err => console.error(err))
         
     }
       }
-      
-      
       
 
     return (
@@ -63,6 +64,10 @@ export function Register() {
                     <div className="row">
                         <form onSubmit={submitForm} className="col-12 col-md-8 offset-md-4 col-lg-16 col-xl-4">
                             <h1 className="h3 mb-3 fw-normal">Registracija</h1>
+                            
+                            {apiResponse && apiResponse.status === 'success' ? <p className="alert alert-success">{apiResponse.msg}</p> : null}
+                            {apiResponse && apiResponse.status === 'error' ? <p className="alert alert-danger">{apiResponse.msg}</p> : null}
+
                             <div className="form-floating">
                               <input value={username} onChange={e => setUsername(e.target.value.trim())} type="text" className={`form-control ` + (isformValidated ? usernameError ? 'is-invalid' : 'is-valid' : '')} />
                               <label htmlFor="floatingInput">Vartotojo vardas</label>

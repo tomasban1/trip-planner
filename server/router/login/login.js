@@ -2,17 +2,17 @@ import express from 'express';
 import { isValidPassword, isValidUsername } from '../../lib/isValid.js';
 import { connection } from '../../db.js';
 
-export const registerApirouter = express.Router();
+export const loginApirouter = express.Router();
 
-registerApirouter.post('/', postRegister);
-registerApirouter.use((req, res) => {
+loginApirouter.post('/', postLogin);
+loginApirouter.use((req, res) => {
     return res.json({
         status: 'error',
         data: 'Toks api metodas /api/register nepalaikomas',
     })
 });
 
-async function postRegister(req, res) {
+async function postLogin(req, res) {
     if (typeof req.body !== 'object'
         || Array.isArray(req.body)
         || req.body === null
@@ -50,46 +50,70 @@ async function postRegister(req, res) {
         });
     }
 
+    let userData = null;
     try {
-        const sql = 'SELECT username FROM users WHERE username = ?;';
-        const result = await connection.execute(sql, [username]);
-        if (result[0].length !== 0) {
+        const sql = 'SELECT * FROM users WHERE username = ? AND password = ?;';
+        const result = await connection.execute(sql, [username, password]);
+
+
+        if (result[0].length !== 1) {
             return res.json({
                 status: 'error',
-                msg: 'Vartotojas su tokiu username jau yra uzregistruotas.',
+                msg: 'Kilo problemu su vartotojo paskyra, susisiekite su client support',
             });
         }
+        userData = result[0][0];
 
     } catch (error) {
         return res.json({
             status: 'error',
-            msg: 'Del techniniu kliuciu nepavyko ivykdyti registracijos proceso, pabandykite veliau',
+            msg: 'Del techniniu kliuciu nepavyko ivykdyti prisijungimo proceso, pabandykite veliau',
         });
     }
 
+    const abc = 'ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuvwxyz123456789';
+    let token = '';
+    for (let i = 0; i < 20; i++) {
+        token += abc[Math.floor(Math.random() * abc.length)];
+    }
+
+    console.log(token);
+
+
     try {
-        const sql = 'INSERT INTO users (username, password) VALUES (?, ?);';
-        const result = await connection.execute(sql, [username, password]);
-        console.log(result);
+        const sql = 'INSERT INTO tokens (token, user_id) VALUES (?, ?);';
+        const result = await connection.execute(sql, [token, userData.id]);
+
 
 
         if (result[0].affectedRows !== 1) {
             return res.json({
                 status: 'error',
-                msg: 'Uzsiregistruoti nepavyko, nes toks vartotojas jau yra.',
+                msg: 'Nepavyko sukurti vartotojo sesijos, pabandykite veliau',
             });
         }
     } catch (error) {
         return res.json({
             status: 'error',
-            msg: 'Del techniniu kliuciu nepavyko ivykdyti registracijos proceso, pabandykite veliau',
+            msg: 'Del techniniu kliuciu nepavyko ivykdyti prisijungimo proceso, pabandykite veliau',
         });
     }
 
-    return res.json({
-        status: 'success',
-        msg: 'Registracija sekminga.',
-    });
+    const cookie = [
+        'loginToken=' + token,
+        'path=/',
+        'domain=localhost',
+        'max-age=86400',
+        'SameSite = Lax',
+        'HttpOnly',
+    ]
+
+    return res
+        .set('Set-Cookie', cookie.join('; '))
+        .json({
+            status: 'success',
+            msg: 'Prisijungta sekmingai.',
+        });
 
 
 }
