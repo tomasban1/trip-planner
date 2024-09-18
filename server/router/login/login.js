@@ -8,7 +8,7 @@ loginApirouter.post('/', postLogin);
 loginApirouter.use((req, res) => {
     return res.json({
         status: 'error',
-        data: 'Toks api metodas /api/register nepalaikomas',
+        data: 'Toks HTTP metodas api/login nepalaikomas',
     })
 });
 
