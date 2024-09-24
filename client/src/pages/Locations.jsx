@@ -5,31 +5,23 @@ import { LocationCard } from "../components/locations/LocationCard";
 
 
 export function Locations(){
+   
     const [locations, setLocations] = useState([]);
-    useEffect(() => {
-      let inProgressMsg = '';
 
-      fetch('http://localhost:5020/api/locations')
-          .then(res => res.json())
-          .then(obj => {
-            if(typeof obj !== 'object'){
-              inProgressMsg = 'fail 1';
-              throw new Error('Is serverio atejo ne objektas')
-            }else {
-              inProgressMsg = 'Duomenys gauti';
-              setLocations(obj.data)
-            }
-          })
-          .catch(err => {
-            inProgressMsg = 'fail 2';
-            console.log(err);
-            
-          })
-          .finally(() =>{
-            console.log(inProgressMsg);
-          })
+    useEffect(() => {
+        fetch('http://localhost:5020/api/locations')
+            .then(res => res.json())
+            .then(obj => {
+                if (typeof obj !== 'object') {
+                    throw new Error('Is serverio atejo ne objektas');
+                } else {
+                    setLocations(obj.data);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }, []);
-    
     
     return (
         <>

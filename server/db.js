@@ -20,7 +20,7 @@ setInterval(async () => {
             console.log('Nepavyko prisijungti prie DB programos');
         }
     } else {
-        console.log('conn ok');
+        // console.log('conn ok');
     }
 }, 5000);
 

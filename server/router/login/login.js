@@ -1,16 +1,29 @@
 import express from 'express';
 import { isValidPassword, isValidUsername } from '../../lib/isValid.js';
 import { connection } from '../../db.js';
+import { env } from '../../env.js';
 
 export const loginApirouter = express.Router();
 
+loginApirouter.get('/', getLogin);
 loginApirouter.post('/', postLogin);
+
 loginApirouter.use((req, res) => {
     return res.json({
         status: 'error',
         data: 'Toks HTTP metodas api/login nepalaikomas',
     })
 });
+
+const tokenLength = 20
+async function getLogin(req, res) {
+
+    return res.json({
+        isLoggedIn: req.user.isLoggedIn,
+        role: req.user.role,
+        username: req.user.username,
+    });
+}
 
 async function postLogin(req, res) {
     if (typeof req.body !== 'object'
@@ -72,8 +85,9 @@ async function postLogin(req, res) {
     }
 
     const abc = 'ABCDEFGHIJKLMNOPQRSTUWXYZabcdefghijklmnopqrstuvwxyz123456789';
+
     let token = '';
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < tokenLength; i++) {
         token += abc[Math.floor(Math.random() * abc.length)];
     }
 
@@ -103,7 +117,7 @@ async function postLogin(req, res) {
         'loginToken=' + token,
         'path=/',
         'domain=localhost',
-        'max-age=86400',
+        `max-age= ` + env.COOKIE_MAX_AGE,
         'SameSite = Lax',
         'HttpOnly',
     ]
@@ -113,6 +127,9 @@ async function postLogin(req, res) {
         .json({
             status: 'success',
             msg: 'Prisijungta sekmingai.',
+            isLoggedIn: true,
+            role: userData.role,
+            username: userData.username,
         });
 
 

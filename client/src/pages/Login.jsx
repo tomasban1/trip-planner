@@ -1,18 +1,26 @@
-import { useState } from "react";
+
+import { useContext, useState } from "react";
 import { Footer } from "../components/footer/Footer";
 import { Header } from "../components/header/Header";
+import { useNavigate } from "react-router-dom";
+import { GlobalContext } from "../context/GlobalContext";
 
 export function Login() {
+  const {changeLoginStatus, changeRole} = useContext(GlobalContext);
+
+
   const minUsernameLength = 3;
   const maxUsernameLength = 20;
-  const minPasswordLength = 12;
+  const minPasswordLength = 12; 
   const maxPasswordLength = 100;
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(import.meta.env.VITE_MODE === 'dev' ? 'Tomas' : '');
   const [isformValidated, setIsFormValidated] = useState(false);
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState(import.meta.env.VITE_MODE === 'dev' ? 'TomasTomasTomas' : '');
   const [usernameError, setusernameError] = useState('');
   const [passwordError, setpasswordError] = useState('');
   const [apiResponse, setApiResponse] = useState(null);
+  const navigate = useNavigate();
+
   
     function submitForm(e){
       e.preventDefault();
@@ -52,7 +60,15 @@ export function Login() {
         }),
       })
         .then(res => res.json())
-        .then(msg => setApiResponse(msg))
+        .then(msg => {
+          setApiResponse(msg)
+
+          if(msg.status === 'success'){
+            changeLoginStatus(true)
+            changeRole(msg.role)
+            navigate('/dashboard')
+          }
+      })
         .catch(err => console.error(err))
         
     }

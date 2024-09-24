@@ -1,8 +1,25 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/react.svg';
+import { useContext } from 'react';
+import { GlobalContext } from '../../context/GlobalContext';
 
 
 export function Header(){
+  const {isLoggedIn, changeLoginStatus, role, username} = useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  function logout(){
+    
+    fetch('http://localhost:5020/api/logout', {
+      credentials: 'include',
+    })
+      .then(() => {
+          changeLoginStatus(false);
+          navigate('/');
+      })
+      .catch(err => console.error(err));
+  }
+
     return (
         <div className="container">
     <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
@@ -12,7 +29,7 @@ export function Header(){
         </Link>
       </div>
 
-      <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+      <ul className="nav col-12 col-md-auto justify-content-center mb-md-0">
         <li>
           <Link to='/' className="nav-link px-2">Pagrindinis</Link>
         </li>
@@ -25,10 +42,18 @@ export function Header(){
         </li>
       </ul>
 
-      <div className="col-md-3 text-end">
+      {!isLoggedIn && <div className="col-md-3 nav justify-content-end">
         <Link to='/login' className="btn btn-outline-primary me-2">Prisijungti</Link>
         <Link to='/register' className="btn btn-primary">Registruotis</Link>
-      </div>
+      </div>}
+
+      {isLoggedIn && <div className="col-md-3 nav justify-content-end">
+        <p>{username} ({role})</p>
+        <Link to='/dashboard' className="nav-link px-2">To dashboard</Link>
+        <button onClick={logout} className="btn btn-outline-primary me-2">Log out</button>
+      </div>}
+
+
     </header>
   </div>
     );
