@@ -8,6 +8,7 @@ export async function userDetails(req, res, next) {
         role: 'public',
         isLoggedIn: false,
         username: '',
+        id: -1,
 
     }
 
@@ -20,6 +21,7 @@ export async function userDetails(req, res, next) {
 
             const sql = `
                 SELECT
+                    users.id,
                     users.username,
                     users.role,
                     users.created_at AS user_created_at,
@@ -34,6 +36,7 @@ export async function userDetails(req, res, next) {
                 req.user.isLoggedIn = true;
                 req.user.role = selectResult[0].role;
                 req.user.username = selectResult[0].username;
+                req.user.id = selectResult[0].id;
             }
 
 

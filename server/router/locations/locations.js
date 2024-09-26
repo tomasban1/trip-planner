@@ -11,7 +11,7 @@ locationsApiRouter.post('/', postLocations);
 
 async function getLocations(req, res) {
     const sql = `
-        SELECT name, img, country, city, street, number, zip 
+        SELECT locations.id AS id, name, img, country, city, street, number, zip 
             FROM locations 
             INNER JOIN adress 
             ON adress.id = locations.adress_id;`;

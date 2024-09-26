@@ -5,7 +5,7 @@ import { GlobalContext } from '../../context/GlobalContext';
 
 
 export function Header(){
-  const {isLoggedIn, changeLoginStatus, role, username} = useContext(GlobalContext);
+  const {isLoggedIn, changeLoginStatus, role, username, likedLocations} = useContext(GlobalContext);
   const navigate = useNavigate();
 
   function logout(){
@@ -49,7 +49,7 @@ export function Header(){
 
       {isLoggedIn && <div className="col-md-3 nav justify-content-end">
         <p>{username} ({role})</p>
-        <Link to='/dashboard' className="nav-link px-2">To dashboard</Link>
+        <Link to='/dashboard' className="nav-link px-2">Dashboard: {likedLocations.length}</Link>
         <button onClick={logout} className="btn btn-outline-primary me-2">Log out</button>
       </div>}
 
