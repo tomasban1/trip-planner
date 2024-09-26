@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 
+
 export function NewLocationForm(){
 
   const [name, setname] = useState('');
   const [nameError, setnameError] = useState('');
   const [img, setImg] = useState('');
   const [imgError, setImgError] = useState('');
-  const [counrty, setCountry] = useState('');
+  const [country, setCountry] = useState('');
   const [countryError, setCountryError] = useState('');
   const [city, setCity] = useState('');
   const [cityError, setCityError] = useState('');
@@ -16,32 +17,25 @@ export function NewLocationForm(){
   const [isFormValidated, setIsFormValidated] = useState(false);
   const [apiResponse, setApiResponse] = useState(null);
 
+  function isValid(str){
+    return typeof str === 'string' && str.length > 0
+  }
+
    function submitForm(e){
       e.preventDefault();
       setIsFormValidated(true);
+     
+      setnameError(isValid(name) ? '' : 'Truksta pavadinimo');
+      setImgError(isValid(img) ? '' : 'Truksta nuorodos');
+      setCountryError(isValid(country) ? '' : 'Truksta salies pavadinimo');
+      setCityError(isValid(city) ? '' : 'Truksta miesto pavadinimo');
 
-      let usernameError = '';
-      
-      // if(username.length < minUsernameLength){
-      //   usernameError = (`Vartotojo vardas yra per trumpas, turi būti mažiausiai ${minUsernameLength} simboliai.`)
-      // } else if(username.length > maxUsernameLength){
-      //   usernameError = (`Slaptažodis yra per ilgas, daugiausiai gali būti ${maxUsernameLength} simbolių.`)
-      // }  
-      setusernameError(usernameError);
-
-      let passwordError = '';
-
-      // if(password.length < minPasswordLength){
-      //   passwordError = `Slaptažodis yra per trumpas, turi būti mažiausiai ${minPasswordLength} simbolių.`
-      // }else if(password.length > maxPasswordLength){
-      //   passwordError = `Slaptažodis yra per ilgas, turi būti mažiausiai ${maxPasswordLength} simbolių.`
-      // }
-      setpasswordError(passwordError)
+     
 
 
-      if(!usernameError && !passwordError){
+      if(!nameError && !imgError && !countryError && !cityError){
 
-        fetch('http://localhost:5020/api/register', {
+        fetch('http://localhost:5020/api/locations', {
         method: 'POST', 
         headers: {
           'Content-Type' : 'application/json'
@@ -49,12 +43,12 @@ export function NewLocationForm(){
         body: JSON.stringify({
           name,
           img,
-          counrty,
+          country,
           city,
         }),
       })
         .then(res => res.json())
-        .then(msg => setApiResponse(msg))
+        .then(data => setApiResponse(data))
         .catch(err => console.error(err))
         
     }
@@ -68,8 +62,8 @@ export function NewLocationForm(){
                     <form onSubmit={submitForm} className="col-12 col-md-8 offset-md-4 col-lg-16 col-xl-4">
                         <h1 className="h3 mb-3 fw-normal">Nauja lokacija</h1>
                         
-                        {apiResponse && apiResponse.status === 'success' ? <p className="alert alert-success">{apiResponse.msg}</p> : null}
-                        {apiResponse && apiResponse.status === 'error' ? <p className="alert alert-danger">{apiResponse.msg}</p> : null}
+                        {apiResponse && apiResponse.status === 'success' ? <p className="alert alert-success">{apiResponse.data}</p> : null}
+                        {apiResponse && apiResponse.status === 'error' ? <p className="alert alert-danger">{apiResponse.data}</p> : null}
 
                         <div className="form-floating">
                           <input value={name} onChange={e => setname(e.target.value.trim())} type="text" placeholder="Nemunas" className={`form-control ` + (isFormValidated ? nameError ? 'is-invalid' : 'is-valid' : '')} />
@@ -84,7 +78,7 @@ export function NewLocationForm(){
                         </div>
 
                         <div className="form-floating">
-                          <input value={counrty} onChange={e => setCountry(e.target.value)} type="Text" className={`form-control ` + (isFormValidated ? countryError ? 'is-invalid' : 'is-valid' : '')} id="floatingPassword" placeholder="Šalis"/>
+                          <input value={country} onChange={e => setCountry(e.target.value)} type="Text" className={`form-control ` + (isFormValidated ? countryError ? 'is-invalid' : 'is-valid' : '')} id="floatingPassword" placeholder="Šalis"/>
                           <label htmlFor="floatingPassword">Šalis</label>
                           {countryError ? <p className="invalid-feedback">{countryError}</p> : null}
                         </div>

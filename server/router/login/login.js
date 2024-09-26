@@ -91,7 +91,7 @@ async function postLogin(req, res) {
         token += abc[Math.floor(Math.random() * abc.length)];
     }
 
-    console.log(token);
+
 
 
     try {

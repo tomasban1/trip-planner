@@ -31,3 +31,7 @@ export function isValidPassword(text) {
     }
     return '';
 }
+
+export function isNonEmptyString(text) {
+    return typeof text === 'string' && text.length > 0;
+}

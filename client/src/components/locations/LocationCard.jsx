@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-export function LocationCard({ img, name }){
+export function LocationCard({ img, name, country }){
     
 
     return (
@@ -13,10 +13,10 @@ export function LocationCard({ img, name }){
                   <li className="me-auto">
                     <img src="https://github.com/twbs.png" alt="Bootstrap" width="32" height="32" className="rounded-circle border border-white"></img>
                   </li>
-                  {/* <li className="d-flex align-items-center me-3">
+                  <li className="d-flex align-items-center me-3">
                     <svg className="bi me-2" width="1em" height="1em"><use xlinkHref="#geo-fill"></use></svg>
-                    <small>{adress.country}</small>
-                  </li> */}
+                    <small>{country}</small>
+                  </li>
                   <li className="d-flex align-items-center">
                     <svg className="bi me-2" width="1em" height="1em"><use xlinkHref="#calendar3"></use></svg>
                     <small>3d</small>

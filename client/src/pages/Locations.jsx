@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Footer } from "../components/footer/Footer";
 import { Header } from "../components/header/Header";
-import { LocationCard } from "../components/locations/LocationCard";
+
+import { PublicLocationList } from "../components/locations/PublicLocationList";
+import { AdminLocationList } from "../components/locations/AdminLocationList";
+import { GlobalContext } from "../context/GlobalContext";
 
 
 export function Locations(){
-   
+    const { role } = useContext(GlobalContext);
     const [locations, setLocations] = useState([]);
 
     useEffect(() => {
@@ -22,6 +25,14 @@ export function Locations(){
                 console.error(err);
             });
     }, []);
+
+    let list = null;
+
+    if(role === 'admin'){
+        list = <AdminLocationList locations={locations}/>
+    }else {
+        list =     <PublicLocationList locations={locations} />
+    }
     
     return (
         <>
@@ -35,11 +46,7 @@ export function Locations(){
                             </div>
                         </div>
                     </div>
-                    <div className="container px-4 py-5">
-                      <div className="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
-                        {locations.map((location, index) => <LocationCard key={index} {...location} />)}
-                      </div>
-                    </div>
+                    {list}
                   </main>
             <Footer />
         </>
